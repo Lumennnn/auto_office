@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2021-09-18 19:50:15
-LastEditTime: 2021-09-24 13:00:12
+LastEditTime: 2021-09-29 14:35:00
 LastEditors: Lumen
 Description:
 FilePath: \auto_office\活动统计\auto_count_single.py
@@ -82,7 +82,7 @@ def excel_to_word(excel_name: str,
                   the_date: str,
                   the_n: int,
                   template: str,
-                  root: str = '.\\'):
+                  root: str = '.\\') -> None:
     """将符合要求的excel文件转换成模板word文件
 
     Args:

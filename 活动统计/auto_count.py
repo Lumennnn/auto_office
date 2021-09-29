@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2021-09-18 19:50:15
-LastEditTime: 2021-09-24 12:59:28
+LastEditTime: 2021-09-29 14:34:43
 LastEditors: Lumen
 Description:
 FilePath: \auto_office\活动统计\auto_count.py
@@ -18,7 +18,7 @@ from docxtpl import DocxTemplate
 def activity_score(sheet: str,
                    date: str,
                    activity: list,
-                   root: str = None):
+                   root: str = None) -> None:
     """统计参与活动生成活动分证明
 
     Args:
@@ -94,7 +94,7 @@ def activity_score(sheet: str,
 def second_class_score(sheet: str,
                        date: str,
                        activity: dict,
-                       root: str = None):
+                       root: str = None)  -> None:
     """统计参与活动生成第二课堂分证明
 
     Args:

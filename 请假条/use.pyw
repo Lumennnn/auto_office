@@ -1,11 +1,12 @@
-'''
+"""
 Author: Lumen
-Date: 2021-09-17 13:49:08
-LastEditTime: 2021-09-21 21:49:15
+Date: 2021-09-19 12:18:45
+LastEditTime: 2021-09-29 14:34:04
 LastEditors: Lumen
 Description:
 🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍
-'''
+"""
+
 import sys
 
 import pandas as pd
@@ -15,12 +16,12 @@ from pywebio.output import *
 import auto_leave as al
 
 
-def check_people(people):
+def check_people(people: str) -> str:
     if people not in ['志愿者', '干部', '干事']:
         return '确保人员类型在所提供范围内'
 
 
-def check_none(the):
+def check_none(the: str) -> str:
     if the is None or '':
         return '值不能为空'
 

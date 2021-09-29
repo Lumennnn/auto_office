@@ -2,10 +2,9 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2021-09-24 13:00:42
+LastEditTime: 2021-09-29 14:33:24
 LastEditors: Lumen
 Description:
-FilePath: \auto_office\请假条\auto_leave.py
 🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍
 """
 
@@ -115,7 +114,7 @@ def excel_to_word(excel_name: str,
                   the_thing: str,
                   the_date2: str,
                   the_n: int,
-                  root: str = '.\\'):
+                  root: str = '.\\') -> None:
     """将符合要求的excel文件转换成模板word文件
 
     Args:
