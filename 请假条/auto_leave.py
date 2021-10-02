@@ -2,21 +2,23 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2021-09-29 14:33:24
+LastEditTime: 2021-10-02 23:30:21
 LastEditors: Lumen
 Description:
 🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍
 """
 
 import os
+from typing import Dict, List, NoReturn
 from math import ceil  # 向上取整
 
 import pandas as pd
 from docxtpl import DocxTemplate
+from pandas.core.frame import DataFrame
 
 
 def excel_to_excel(old_excel: list,
-                   temp_path='./模板/temp') -> list:
+                   temp_path: str='./模板/temp') -> List(str):
     """将excel表格转换成适合使用的新excel表格
 
     Args:
@@ -26,7 +28,8 @@ def excel_to_excel(old_excel: list,
     Returns:
         list: 生成的excel表格列表
     """
-    temp_excel_list = get_excel_list(temp_path)
+    temp_excel_list: List[str] = get_excel_list(temp_path)
+
     if temp_excel_list is None:
         print('无临时文件')
     else:
@@ -35,7 +38,8 @@ def excel_to_excel(old_excel: list,
 
     if not os.path.exists(temp_path):
         os.makedirs(temp_path)
-    frame = pd.read_excel(old_excel)  # 载入需要转换的excel表格
+
+    frame: DataFrame = pd.read_excel(old_excel)  # 载入需要转换的excel表格
 
     frame['年级'] = frame['专业班级'].str[2:4]  # 切分班级列，方便按要求排序
     frame['年级'] = frame['年级'].map(lambda x: int(x))
@@ -49,47 +53,47 @@ def excel_to_excel(old_excel: list,
 
     frame['时间段'] = frame.apply(get_time_quantum, axis=1)  # 根据时间段赋值
 
-    time_college_grouping = frame.groupby([frame['时间'], frame['学院']])  # 按照时间和学院进行分组
+    time_college_grouping: DataFrame = frame.groupby([frame['时间'], frame['学院']])  # 按照时间和学院进行分组
 
-    time_college_grouping_list = []  # 创建新的分组表
+    time_college_grouping_list: List[DataFrame] = []  # 创建新的分组表
 
     for i in time_college_grouping:  # 向分组表添加新分组
         time_college_grouping_list.append(i)
     # 根据长度分组
     for i in range(len(time_college_grouping_list)):  # 创建临时excel表，并且设置表格居中
-        df = pd.DataFrame(time_college_grouping_list[i][1])
+        df: DataFrame = pd.DataFrame(time_college_grouping_list[i][1])
         df = df.loc[:, ~df.columns.str.contains('Unnamed')]  # 去除unnamed列
-        name = str(time_college_grouping_list[i][0][1])
-        max_raw = df.shape[0]
-        block = ceil(max_raw / 18)  # 向上取整
+        name: str = str(time_college_grouping_list[i][0][1])
+        max_raw: int = df.shape[0]
+        block: int = ceil(max_raw / 18)  # 向上取整
         print(max_raw, block)
 
         for x in range(block):
             if x == block-1:
-                new_df = df[x*18:max_raw]
+                new_df: DataFrame = df[x*18:max_raw]
                 print(new_df)
                 writer = pd.ExcelWriter(f'./模板/temp/{name}-{i}.{x+1}.xlsx', engine='xlsxwriter')  # 居中保存进excel
                 new_df = new_df.style.set_properties(**{'text-align': "center"})
                 new_df.to_excel(writer, sheet_name='Sheet1')
                 writer.save()
             else:
-                new_df = df[x*18:(x+1)*18]
+                new_df: DataFrame = df[x*18:(x+1)*18]
                 print(new_df)
                 writer = pd.ExcelWriter(f'./模板/temp/{name}-{i}.{x+1}.xlsx', engine='xlsxwriter')  # 居中保存进excel
                 new_df = new_df.style.set_properties(**{'text-align': "center"})
                 new_df.to_excel(writer, sheet_name='Sheet1')
                 writer.save()
 
-    new_excel_list = get_excel_list("./模板/temp")  # 生成的临时excel文件名列表
+    new_excel_list: List[str] = get_excel_list("./模板/temp")  # 生成的临时excel文件名列表
 
     return new_excel_list
 
 
-def get_time_quantum(frame: str) -> str:
+def get_time_quantum(frame: DataFrame) -> str:
     """根据表格内的请假时间来判断请假时间段
 
     Args:
-        frame (str): 请假时间
+        frame (DataFrame): 请假时间
 
     Returns:
         str: 时间段
@@ -114,7 +118,7 @@ def excel_to_word(excel_name: str,
                   the_thing: str,
                   the_date2: str,
                   the_n: int,
-                  root: str = '.\\') -> None:
+                  root: str = '') -> NoReturn:
     """将符合要求的excel文件转换成模板word文件
 
     Args:
@@ -126,22 +130,22 @@ def excel_to_word(excel_name: str,
         the_n (int): 避免重复，给定不重复数字
         root (str, optional): 保存路径. Defaults to '.\'.
     """
-    sheet = pd.read_excel(excel_name)
-    name_list = []  # 姓名列表
-    class_list = []  # 班级列表
+    sheet: DataFrame = pd.read_excel(excel_name)
+    name_list: List[str] = []  # 姓名列表
+    class_list: List[str] = []  # 班级列表
 
-    college_name = sheet['学院'][0]
-    time = sheet['时间'][0]
-    time_quantum = sheet['时间段'][0]
-    peoples_name = the_people_name
-    date1 = the_date1
-    thing = the_thing
-    date2 = the_date2
-    number = the_n
+    college_name: str = sheet['学院'][0]
+    time: str = sheet['时间'][0]
+    time_quantum: str = sheet['时间段'][0]
+    peoples_name: str = the_people_name
+    date1: str = the_date1
+    thing: str = the_thing
+    date2: str = the_date2
+    number: int = the_n
 
-    tpl = DocxTemplate('.\\模板\\请假条程序套用模板.docx')
-    name_list = list(sheet['姓名'])
-    class_list = list(sheet['专业班级'])
+    tpl: DocxTemplate = DocxTemplate('.\\模板\\请假条程序套用模板.docx')
+    name_list: List[str] = list(sheet['姓名'])
+    class_list: List[str] = list(sheet['专业班级'])
 
     for i in range(len(name_list)):  # 两个字的姓名与三个字姓名对齐
         if len(name_list[i]) == 2:
@@ -155,7 +159,7 @@ def excel_to_word(excel_name: str,
         for i in range(18 - len(class_list)):
             class_list.append('')
 
-    context = {
+    context: Dict[str, str] = {
         'college_name': college_name,
         'peoples_name': peoples_name,
         'date1': date1,
@@ -181,16 +185,16 @@ def excel_to_word(excel_name: str,
                  '请假条' + time_quantum + '-' + str(number + 1) + '.docx')
 
 
-def get_excel_list(path: str) -> list:
+def get_excel_list(path: str) -> List[str]:
     """获取路径下的excel文件
 
     Args:
         path (str): 路径
 
     Returns:
-        list: 路径下的excel列表
+        List[str]: 路径下的excel列表
     """
-    excel_lists = []
+    excel_lists: List[str] = []
 
     for i in os.listdir(path):
         if str(i).endswith('.xlsx'):

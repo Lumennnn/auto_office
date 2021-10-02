@@ -2,22 +2,23 @@
 """
 Author: Lumen
 Date: 2021-09-18 19:50:15
-LastEditTime: 2021-09-29 14:35:00
+LastEditTime: 2021-10-02 23:18:19
 LastEditors: Lumen
 Description:
-FilePath: \auto_office\活动统计\auto_count_single.py
 🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍
 """
 
 import os
+from typing import List, NoReturn, Dict
 from math import ceil  # 向上取整
 
 import pandas as pd
 from docxtpl import DocxTemplate
+from pandas.core.frame import DataFrame
 
 
 def excel_to_excel(old_excel: str,
-                   temp_path='./模板/temp') -> list:
+                   temp_path: str='./模板/temp') -> List[str]:
     """将excel表格转换成适合使用的新excel表格
 
     Args:
@@ -30,7 +31,7 @@ def excel_to_excel(old_excel: str,
     if not os.path.exists(temp_path):
         os.makedirs(temp_path)
 
-    frame = pd.read_excel(old_excel)  # 载入需要转换的excel表格
+    frame: DataFrame = pd.read_excel(old_excel)  # 载入需要转换的excel表格
 
     frame['年级'] = frame['专业班级'].str[2:4]  # 切分班级列，方便按要求排序
     frame['年级'] = frame['年级'].map(lambda x: int(x))
@@ -42,8 +43,8 @@ def excel_to_excel(old_excel: str,
 
     frame = frame.sort_values(by=['年级', '专业', '个人班级'], ascending=True)  # 排序
 
-    college_grouping = frame.groupby([frame['学院']])  # 按照时间和学院进行分组
-    college_grouping_list = []  # 创建新的分组表
+    college_grouping: DataFrame = frame.groupby([frame['学院']])  # 按照时间和学院进行分组
+    college_grouping_list: List[DataFrame] = []  # 创建新的分组表
 
     for i in college_grouping:  # 向分组表添加新分组
         college_grouping_list.append(i)
@@ -51,9 +52,9 @@ def excel_to_excel(old_excel: str,
     for i in range(len(college_grouping_list)):  # 创建临时excel表，并且设置表格居中
         df = pd.DataFrame(college_grouping_list[i][1])
         df = df.loc[:, ~df.columns.str.contains('Unnamed')]  # 去除unnamed列
-        name = str(college_grouping_list[i][0])
-        max_raw = df.shape[0]
-        block = ceil(max_raw / 18)  # 向上取整
+        name: str = str(college_grouping_list[i][0])
+        max_raw: int = df.shape[0]
+        block: int = ceil(max_raw / 18)  # 向上取整
         # print(max_raw, block)
 
         for x in range(block):
@@ -72,7 +73,7 @@ def excel_to_excel(old_excel: str,
                 new_df.to_excel(writer, sheet_name='Sheet1')
                 writer.save()
 
-    new_excel_list = get_excel_list("./模板/temp")  # 生成的临时excel文件名列表
+    new_excel_list: List[str] = get_excel_list("./模板/temp")  # 生成的临时excel文件名列表
 
     return new_excel_list
 
@@ -82,7 +83,7 @@ def excel_to_word(excel_name: str,
                   the_date: str,
                   the_n: int,
                   template: str,
-                  root: str = '.\\') -> None:
+                  root: str = '.\\') -> NoReturn:
     """将符合要求的excel文件转换成模板word文件
 
     Args:
@@ -96,15 +97,15 @@ def excel_to_word(excel_name: str,
     if not os.path.exists(root + the_thing):
         os.makedirs(root + the_thing)
 
-    sheet = pd.read_excel(excel_name)
-    name_list = []  # 姓名列表
-    class_list = []  # 班级列表
+    sheet: DataFrame = pd.read_excel(excel_name)
+    name_list: List[str] = []  # 姓名列表
+    class_list: List[str] = []  # 班级列表
 
-    college_name = list(sheet['学院'])[0]
+    college_name: List[str] = list(sheet['学院'])[0]
 
-    tpl = DocxTemplate(template)
-    name_list = list(sheet['姓名'])
-    class_list = list(sheet['专业班级'])
+    tpl: DocxTemplate = DocxTemplate(template)
+    name_list: List[str] = list(sheet['姓名'])
+    class_list: List[str] = list(sheet['专业班级'])
 
     for i in range(len(name_list)):  # 两个字的姓名与三个字姓名对齐
         if len(name_list[i]) == 2:
@@ -118,7 +119,7 @@ def excel_to_word(excel_name: str,
         for i in range(18 - len(class_list)):
             class_list.append('')
 
-    context = {
+    context: Dict[str, str] = {
         'college_name': college_name,
         'date': the_date,
     }
@@ -132,7 +133,7 @@ def excel_to_word(excel_name: str,
     tpl.save(root + the_thing + '\\' + college_name + the_thing + '-' + str(the_n + 1) + '.docx')
 
 
-def get_excel_list(path: str) -> list:
+def get_excel_list(path: str) -> List[str]:
     """获取路径下的excel文件
 
     Args:
@@ -141,7 +142,7 @@ def get_excel_list(path: str) -> list:
     Returns:
         list: 路径下的excel列表
     """
-    excel_lists = []
+    excel_lists: List[str] = []
 
     for i in os.listdir(path):
         if str(i).endswith('.xlsx'):

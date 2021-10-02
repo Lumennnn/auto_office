@@ -1,7 +1,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2021-09-29 14:34:04
+LastEditTime: 2021-10-02 23:34:19
 LastEditors: Lumen
 Description:
 🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍
@@ -17,11 +17,27 @@ import auto_leave as al
 
 
 def check_people(people: str) -> str:
+    """人员类型检查
+
+    Args:
+        people (str): 人员类型
+
+    Returns:
+        str: 不在范围内则返回提示
+    """
     if people not in ['志愿者', '干部', '干事']:
         return '确保人员类型在所提供范围内'
 
 
 def check_none(the: str) -> str:
+    """检查是否为空
+
+    Args:
+        the (str): 检查字段
+
+    Returns:
+        str: 为空则返回提示
+    """
     if the is None or '':
         return '值不能为空'
 
@@ -59,9 +75,9 @@ if __name__ == '__main__':
     else:
         get_input = input_group("请假条信息",
                                 [input('请输入活动参与人（志愿者/干部/干事）', name='people_name', type=TEXT, validate=check_people),
-                                input('请输入活动日期，格式为：2021年5月1日', name='date1', type=TEXT, validate=check_none),
-                                input('请输入活动名称', name='thing', type=TEXT, validate=check_none),
-                                input('请输入落款日期，格式为：二〇二一年五月一日', name='date2', type=TEXT, validate=check_none)])
+                                 input('请输入活动日期，格式为：2021年5月1日', name='date1', type=TEXT, validate=check_none),
+                                 input('请输入活动名称', name='thing', type=TEXT, validate=check_none),
+                                 input('请输入落款日期，格式为：二〇二一年五月一日', name='date2', type=TEXT, validate=check_none)])
         print(get_input['date2'])
         put_text('这是进度条🗡')
         try:
