@@ -1,7 +1,7 @@
 """
 Author: Lumen
 Date: 2021-09-23 21:53:07
-LastEditTime: 2021-10-08 16:45:59
+LastEditTime: 2021-10-08 19:41:52
 LastEditors: Lumen
 Description:
 🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     }
     # 第二课堂证明按天进行计算
     ac.second_class_score(sheet=sheet1, date=date, activity=activity_dict, root="长安")
-    # ac.second_class_score(sheet=sheet2, date=date, activity=activity_dict, root='翠雁')
+    # ac.second_class_score(sheet=sheet2, date=date, activity=activity_dict, root="翠雁")
 
     activity_list = [
         "拉拉手",

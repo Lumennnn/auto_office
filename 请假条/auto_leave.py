@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2021-10-08 16:46:06
+LastEditTime: 2021-10-08 19:37:43
 LastEditors: Lumen
 Description:
 🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍
@@ -17,16 +17,19 @@ from docxtpl import DocxTemplate
 from pandas.core.frame import DataFrame
 
 
-def excel_to_excel(old_excel: list, temp_path: str = "./模板/temp") -> List(str):
+def excel_to_excel(old_excel: str, temp_path: str = "./模板/temp/") -> List[str]:
     """将excel表格转换成适合使用的新excel表格
 
     Args:
-        old_excel (list): 初始统计表格，应将所有信息放置在同一工作表中
+        old_excel (str): 初始统计表格，应将所有信息放置在同一工作表中
         temp_path (str, optional): 生成excel表格保存路径. Defaults to './模板/temp'.
 
     Returns:
-        list: 生成的excel表格列表
+        List[str]: 生成的excel表格列表
     """
+    if not os.path.exists(temp_path):
+        os.makedirs(temp_path)
+
     temp_excel_list: List[str] = get_excel_list(temp_path)
 
     if temp_excel_list is None:
@@ -34,9 +37,6 @@ def excel_to_excel(old_excel: list, temp_path: str = "./模板/temp") -> List(st
     else:
         for excel in temp_excel_list:  # 删除上次运行时生成的临时excel文件
             os.remove(temp_path + excel)
-
-    if not os.path.exists(temp_path):
-        os.makedirs(temp_path)
 
     frame: DataFrame = pd.read_excel(old_excel)  # 载入需要转换的excel表格
 
@@ -90,6 +90,7 @@ def excel_to_excel(old_excel: list, temp_path: str = "./模板/temp") -> List(st
                 writer.save()
 
     new_excel_list: List[str] = get_excel_list("./模板/temp")  # 生成的临时excel文件名列表
+    print("生成的Excel文件列表：", new_excel_list)
 
     return new_excel_list
 
@@ -150,7 +151,7 @@ def excel_to_word(
     date2: str = the_date2
     number: int = the_n
 
-    tpl: DocxTemplate = DocxTemplate(".\\模板\\请假条程序套用模板.docx")
+    tpl = DocxTemplate("./模板/请假条程序模板.docx")
     name_list: List[str] = list(sheet["姓名"])
     class_list: List[str] = list(sheet["专业班级"])
 

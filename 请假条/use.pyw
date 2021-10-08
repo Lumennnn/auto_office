@@ -1,7 +1,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2021-10-08 16:46:11
+LastEditTime: 2021-10-08 19:35:33
 LastEditors: Lumen
 Description:
 🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍
@@ -74,9 +74,11 @@ if __name__ == "__main__":
     excel_list = al.get_excel_list(".")
 
     excel = radio("选择当前目录下要转换的文件（仅限后缀名为.xlsx的文件）", excel_list)
+    excel: str = str(excel)
+    print("选择的Excel文件：", excel)
     frame = pd.read_excel(excel, "Sheet1").head(10)
     put_code(frame, language="Python")
-    put_text("以上为所选文件前10行信息，确认格式正确后按确认按键继续")
+    put_text("以上为所选文件前10行信息，确认格式正确后按确认按钮继续")
     confirm = actions("确认继续?", ["继续", "取消"], help_text="请再次确认文件格式正确")
     put_text("------------这还是分割线------------")
 
@@ -107,14 +109,15 @@ if __name__ == "__main__":
                 ),
             ],
         )
-        print(get_input["date2"])
         put_text("这是进度条🗡")
         try:
             put_processbar("bar")
-            to_write_excel = al.excel_to_excel(old_excel=excel)
-            len_excel_list = len(to_write_excel) - 1
+            print("运行中.......")
+            to_write_excel = al.excel_to_excel(excel)
+            excel_list_len = len(to_write_excel) - 1
             for n, excel in enumerate(to_write_excel):
-                set_processbar("bar", n / len_excel_list)
+                set_processbar("bar", n / excel_list_len)
+                print(f"\n进度：{n+1}/{excel_list_len+1}")
                 al.excel_to_word(
                     "./模板/temp/" + excel,
                     the_people_name=get_input["people_name"],
@@ -128,5 +131,6 @@ if __name__ == "__main__":
         else:
             put_text("------------这又是分割线------------")
             put_markdown(r"""### 程序运行成功，请在程序所在目录查看""")
+            print(r"""### 程序运行成功，请在程序所在目录查看""")
         finally:
             sys.exit()
