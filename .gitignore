@@ -18,6 +18,7 @@ __pycache__/
 *.zip
 *.tar.gz
 *.rar
-
+*.pdf
+*.log
 # office 打开时生成的临时文件
 ~'$'*.docx

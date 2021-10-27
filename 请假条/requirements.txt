@@ -1,4 +1,5 @@
 pandas
 docxtpl
+pywebio
 xlsxwriter
 loguru
