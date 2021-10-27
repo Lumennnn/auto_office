@@ -1,4 +1,0 @@
-pandas
-docxtpl
-pywebio
-xlsxwriter
