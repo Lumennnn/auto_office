@@ -11,14 +11,14 @@ __pycache__/
 /icons8_office_365.ico
 
 # Package Files #
+*.rar
+*.pdf
+*.log
 *.jar
 *.war
 *.nar
 *.ear
 *.zip
 *.tar.gz
-*.rar
-*.pdf
-*.log
 # office 打开时生成的临时文件
 ~'$'*.docx

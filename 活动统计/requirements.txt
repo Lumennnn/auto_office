@@ -1,4 +1,4 @@
 pandas
 docxtpl
-xlsxwriter
 loguru
+xlsxwriter
