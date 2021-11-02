@@ -2,14 +2,13 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2021-10-27 18:28:25
+LastEditTime: 2021-11-02 22:24:40
 LastEditors: Lumen
 Description:
 👻👻👻👻👻👻👻👻👻👻👻👻👻👻
 """
 
 import os
-import sys
 from math import ceil  # 向上取整
 from typing import Dict, List, NoReturn
 
@@ -44,8 +43,6 @@ def excel_to_excel(old_excel: str, temp_path: str = "./模板/temp/") -> List[st
             os.remove(temp_path + excel)
 
     frame: DataFrame = pd.read_excel(old_excel)  # 载入需要转换的excel表格
-
-    check_excel(frame=frame)  # 检查表格是否合适
 
     frame["年级"] = frame["专业班级"].str[2:4]  # 切分班级列，方便按要求排序
     frame["年级"] = frame["年级"].map(lambda x: int(x))
@@ -242,18 +239,21 @@ def get_excel_list(path: str) -> List[str]:
 
 
 @logger.catch
-def check_excel(frame: DataFrame) -> NoReturn:
+def check_excel(frame: DataFrame) -> bool:
     """检查列表是否符合规范
 
     Args:
         frame (DataFrame): 传入DataFrame格式表格
+
+    Returns:
+        bool: 返回表格是否正确
     """
     df_columns: set = set(frame)
     right_columns: set = set(["学院", "专业班级", "姓名", "时间"])
     if not right_columns.issubset(df_columns):
         logger.warning("检查列名是否符合规范")
         # print("检查列名是否符合规范")
-        sys.exit()
+        return False
 
     right_time: set = set(["（", "）"])
     times: List[str] = list(frame["时间"])
@@ -261,18 +261,20 @@ def check_excel(frame: DataFrame) -> NoReturn:
         if not right_time.issubset(set(time)):
             logger.warning(f"检查时间格式是否符合规范(使用中文括号)->行号:{index + 2}")
             # print(f"检查时间格式是否符合规范(使用中文括号)->行号:{index + 2}")
-            sys.exit()
+            return False
 
     class_names: List[str] = list(frame["专业班级"])
     for index, class_name in enumerate(class_names):
         if len(class_name) > 6:
             logger.warning(f"检查专业班级是否符合规范(超出长度限制)->行号:{index + 2}")
             # print(f"检查专业班级是否符合规范(超出长度限制)->行号:{index + 2}")
-            sys.exit()
+            return False
 
     names: List[str] = list(frame["姓名"])
     for index, name in enumerate(names):
         if len(name) > 5:
             logger.warning(f"检查姓名长度是否符合规范(超出长度限制)->行号:{index + 2}")
             # print(f"检查姓名长度是否符合规范(超出长度限制)->行号:{index + 2}")
-            sys.exit()
+            return False
+
+    return True

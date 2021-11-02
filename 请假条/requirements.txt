@@ -3,3 +3,4 @@ docxtpl
 loguru
 pywebio
 xlsxwriter
+openpyxl
