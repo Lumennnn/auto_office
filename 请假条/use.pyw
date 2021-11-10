@@ -1,16 +1,14 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2021-11-02 22:30:42
+LastEditTime: 2021-11-10 15:45:46
 LastEditors: Lumen
 Description:
 👻👻👻👻👻👻👻👻👻👻👻👻👻
 """
-
 import sys
 
 import pandas as pd
-from loguru import logger
 from pywebio.input import *
 from pywebio.output import *
 
@@ -47,7 +45,7 @@ if __name__ == "__main__":
     img1 = open(".\\模板\\bangonshi.jpg", "rb").read()
     img2 = open(".\\模板\\school.png", "rb").read()
     put_image(src=img1, width="770px", height="720px")
-    put_markdown(r"""### 使用时注意事项：""")
+    put_markdown("### 使用时注意事项：")
     put_text("1.确保选择的excel文件内容为以下格式")
     put_table(
         [
@@ -70,77 +68,52 @@ if __name__ == "__main__":
     put_text("3.长安校区共有下列学院及专业")
     put_image(src=img2, width="2000px")
     put_text("4.确保输入内容的正确性")
-    put_text("------------这是分割线------------")
+    put_text("------------------------这是分割线------------------------")
 
     excel_list = al.get_excel_list(".")
 
     excel = radio("选择当前目录下要转换的文件（仅限后缀名为.xlsx的文件）", excel_list)
     excel: str = str(excel)
     print("选择的Excel文件：", excel)
-    frame = pd.read_excel(excel, "Sheet1").head(10)
-    put_code(frame, language="Python")
-    put_text("以上为所选文件前10行信息")
+    frame = pd.read_excel(excel)
 
-    if not al.check_excel(frame):  # 检查表格是否合适
-        put_text("------------这还是分割线------------")
-        put_markdown("### 表格存在格式错误，请检查日志查看具体错误！")
-        sys.exit()
+    with put_loading(shape="border", color="primary"):
+        if not al.check_data_frame(frame):  # 检查表格是否合适
+            put_markdown("### 表格存在格式错误，请检查日志查看具体错误！")
+            sys.exit()
 
-    confirm = actions("确认继续?", ["继续", "取消"], help_text="请再次确认文件格式正确")
-    put_text("------------这还是分割线------------")
+    get_input = input_group(
+        "请假条信息",
+        [
+            input(
+                "请输入活动参与人（志愿者/干部/干事）",
+                name="people_name",
+                type=TEXT,
+                validate=check_people,
+            ),
+            input(
+                "请输入活动日期，格式为：2021年5月1日", name="date1", type=TEXT, validate=check_none,
+            ),
+            input("请输入活动名称", name="thing", type=TEXT, validate=check_none),
+            input(
+                "请输入落款日期，格式为：二〇二一年五月一日", name="date2", type=TEXT, validate=check_none,
+            ),
+        ],
+    )
 
-    if confirm == "取消":
-        sys.exit()
-    else:
-        get_input = input_group(
-            "请假条信息",
-            [
-                input(
-                    "请输入活动参与人（志愿者/干部/干事）",
-                    name="people_name",
-                    type=TEXT,
-                    validate=check_people,
-                ),
-                input(
-                    "请输入活动日期，格式为：2021年5月1日",
-                    name="date1",
-                    type=TEXT,
-                    validate=check_none,
-                ),
-                input("请输入活动名称", name="thing", type=TEXT, validate=check_none),
-                input(
-                    "请输入落款日期，格式为：二〇二一年五月一日",
-                    name="date2",
-                    type=TEXT,
-                    validate=check_none,
-                ),
-            ],
-        )
-
-        put_text("这是进度条🗡")
+    with put_loading(shape="grow", color="primary"):
         try:
-            put_processbar("bar")
-            print("运行中.......")
-            to_write_excel = al.excel_to_excel(excel)
-            excel_list_len = len(to_write_excel) - 1
-            for n, excel in enumerate(to_write_excel):
-                set_processbar("bar", n / excel_list_len)
-                print(f"\n进度：{n+1}/{excel_list_len+1}")
-                al.excel_to_word(
-                    "./模板/temp/" + excel,
-                    the_people_name=get_input["people_name"],
-                    the_date1=get_input["date1"],
-                    the_thing=get_input["thing"],
-                    the_date2=get_input["date2"],
-                    the_n=n,
-                )
+            al.data_frame_to_final_word(
+                data_frame=frame,
+                the_people_type=get_input["people_name"],
+                the_date1=get_input["date1"],
+                the_thing=get_input["thing"],
+                the_date2=get_input["date2"],
+            )
         except (ValueError, AttributeError, NameError, TypeError) as e:
-            logger.exception("出错了！")
-            put_text("------------这又是分割线------------")
-            put_text("出了一点点点点点小问题！")
+            put_markdown("### 出了一点点点点点小问题！在日志中查看错误")
         else:
-            put_text("------------这又是分割线------------")
             put_markdown("### 程序运行成功，请在程序所在目录查看")
-            print("\n程序运行成功，请在程序所在目录查看")
+            print("程序运行成功，请在程序所在目录查看")
         finally:
             sys.exit()

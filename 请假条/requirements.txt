@@ -2,5 +2,4 @@ pandas
 docxtpl
 loguru
 pywebio
-xlsxwriter
-openpyxl
+pathos
