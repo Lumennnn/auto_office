@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2021-11-10 15:51:46
+LastEditTime: 2021-11-10 20:51:28
 LastEditors: Lumen
 Description: 活动请假条制作
 
@@ -132,6 +132,7 @@ def check_data_frame(data_frame: DataFrame):
     for i in is_right_list:
         if i == False:
             is_all_right = False
+            break
 
     return is_all_right
 
