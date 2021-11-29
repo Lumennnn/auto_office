@@ -1,7 +1,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2021-11-10 15:45:46
+LastEditTime: 2021-11-29 12:14:53
 LastEditors: Lumen
 Description:
 👻👻👻👻👻👻👻👻👻👻👻👻👻
@@ -12,7 +12,7 @@ import pandas as pd
 from pywebio.input import *
 from pywebio.output import *
 
-import auto_leave as al
+import request_package.auto_leave as al
 
 
 def check_people(people: str) -> str:
@@ -76,6 +76,10 @@ if __name__ == "__main__":
     excel: str = str(excel)
     print("选择的Excel文件：", excel)
     frame = pd.read_excel(excel)
+    # 去除空行
+    frame.dropna(how="all", inplace=True)
+    # 填充空值
+    frame.fillna(value="空", inplace=True)
 
     with put_loading(shape="border", color="primary"):
         if not al.check_data_frame(frame):  # 检查表格是否合适
@@ -110,7 +114,8 @@ if __name__ == "__main__":
                 the_thing=get_input["thing"],
                 the_date2=get_input["date2"],
             )
-        except (ValueError, AttributeError, NameError, TypeError) as e:
+        except Exception as e:
+            print(e)
             put_markdown("### 出了一点点点点点小问题！在日志中查看错误")
         else:
             put_markdown("### 程序运行成功，请在程序所在目录查看")

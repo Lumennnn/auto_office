@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2021-11-20 16:03:03
+LastEditTime: 2021-11-29 12:15:05
 LastEditors: Lumen
 Description: 活动请假条制作小程序
 
@@ -75,27 +75,21 @@ def check_data_frame_by_column(frame: DataFrame, type: str) -> bool:
     """
     is_right: bool = True
 
-    if type == "columns":
-        df_columns: set = set(frame)
-        right_columns: set = set(["学院", "专业班级", "姓名", "时间"])
-        if not right_columns.issubset(df_columns):
-            logger.error("检查列名是否符合规范")
-            is_right = False
-    elif type == "times":
+    if type == "times":
         right_time: set = set(["（", "）"])
-        times: List[str] = list(frame["时间"])
-        for index, time in enumerate(times):
-            if not right_time.issubset(set(time)):
-                logger.error(f"检查时间格式是否符合规范(使用中文括号)->行号:{index + 2}")
+        time_list: List[str] = list(frame["时间"])
+        for index, time in enumerate(time_list):
+            if len(time) < 2 or not right_time.issubset(set(time)):
+                logger.error(f"检查时间格式是否符合规范(应使用中文括号)->行号:{index + 2}")
                 is_right = False
-        time_types = dict(Counter(times))
-        if len(time_types) > (0.5 * len(times)):
+        time_types = dict(Counter(time_list))
+        if len(time_types) > (0.5 * len(time_list)):
             logger.error(f"检查时间格式是否符合规范(时间段范围出错)->行号:{index + 2}")
             is_right = False
     elif type == "class_name":
         class_names: List[str] = list(frame["专业班级"])
-        for index, class_name in enumerate(class_names):
-            if len(class_name) != 6:
+        for index, name in enumerate(class_names):
+            if len(name) != 6:
                 logger.error(f"检查专业班级是否符合规范(不符合长度限制)->行号:{index + 2}")
                 is_right = False
     elif type == "names":
@@ -118,8 +112,16 @@ def check_data_frame(data_frame: DataFrame):
         [type]: 表格是否符合规范
     """
     is_all_right = True
+
+    # 检查列名称
+    df_columns: set = set(data_frame)
+    right_columns: set = set(["学院", "专业班级", "姓名", "时间"])
+    if not right_columns.issubset(df_columns):
+        logger.error("检查列名是否符合规范")
+        return False
+
     p = Pool()
-    type_list = ["columns", "times", "class_name", "names"]
+    type_list = ["times", "class_name", "names"]
     data_list = [data_frame for _ in range(len(type_list))]
 
     is_right_list = p.amap(check_data_frame_by_column, data_list, type_list).get()
