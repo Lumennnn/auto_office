@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2022-03-12 12:25:48
+LastEditTime: 2022-03-12 15:12:27
 LastEditors: Lumen
 Description: 活动请假条制作小程序
 
@@ -18,6 +18,7 @@ from docxtpl import DocxTemplate
 from loguru import logger
 from pandas.core.frame import DataFrame
 from pathos.pools import ProcessPool as Pool
+import asyncio
 
 logger.add("runing.log", retention="30 days", enqueue=True)
 
@@ -84,7 +85,7 @@ def check_data_frame_by_column(frame: DataFrame, type: str) -> bool:
                 is_right = False
         time_types = dict(Counter(time_list))
         if len(time_types) > (0.5 * len(time_list)):
-            logger.error(f"检查时间格式是否符合规范(时间段范围出错)->行号:{index + 2}")
+            logger.error(f"检查时间格式是否符合规范(时间段范围数量出错)")
             is_right = False
     elif type == "class_name":
         class_names: List[str] = list(frame["专业班级"])
@@ -126,17 +127,11 @@ def check_data_frame(data_frame: DataFrame):
 
     is_right_list = p.amap(check_data_frame_by_column, data_list, type_list).get()
 
-    # 接下来还要使用进程池，因此不进行关闭操作
     # 执行完close后不会有新的进程加入到pool,join函数等待所有子进程结束
-    # p.close()
-    # p.join()
+    p.close()
+    p.join()
 
-    for i in is_right_list:
-        if i == False:
-            is_all_right = False
-            break
-
-    return is_all_right
+    return all(is_right_list)
 
 
 def split_data_frame(frame: DataFrame) -> List[DataFrame]:
@@ -160,14 +155,12 @@ def split_data_frame(frame: DataFrame) -> List[DataFrame]:
 
     frame["时间段"] = frame.apply(get_time_quantum, axis=1)  # 根据时间段赋值
 
-    time_college_grouping: DataFrame = frame.groupby(
-        [frame["时间"], frame["学院"]]
-    )  # 按照时间和学院进行分组
+    time_college_grouping = frame.groupby(["时间", "学院"])  # 按照时间和学院进行分组
 
-    time_college_groups: List[DataFrame] = []  # 创建新的分组表
+    time_college_groups = []  # 创建新的分组表
 
-    for i in time_college_grouping:  # 向分组表添加新分组
-        time_college_groups.append(i)
+    for _ in time_college_grouping:  # 向分组表添加新分组
+        time_college_groups.append(_)
 
     spilt_data_frame_group: List[DataFrame] = []
     # 根据长度切分成合适长度（最大长度18）的DataFrame表格
@@ -187,7 +180,7 @@ def split_data_frame(frame: DataFrame) -> List[DataFrame]:
     return spilt_data_frame_group
 
 
-def data_frame_to_word(
+async def data_frame_to_word(
     data_frame: DataFrame,
     the_people_type: str,
     the_date1: str,
@@ -281,14 +274,14 @@ def data_frame_to_word(
         )
 
 
-def data_frame_to_final_word(
+async def data_frame_to_final_word(
     data_frame: DataFrame,
     the_people_type: str,
     the_date1: str,
     the_thing: str,
     the_date2: str,
     root: str = "",
-) -> NoReturn:
+) -> None:
     """将DataFrame转化为Word文件
 
     Args:
@@ -302,28 +295,19 @@ def data_frame_to_final_word(
     Returns:
         NoReturn: [description]
     """
-    p = Pool()
 
     spilt_data_frame_group = split_data_frame(data_frame)
-    the_people_type_list = [the_people_type for _ in range(len(spilt_data_frame_group))]
-    the_date1_list = [the_date1 for _ in range(len(spilt_data_frame_group))]
-    the_thing_list = [the_thing for _ in range(len(spilt_data_frame_group))]
-    the_date2_list = [the_date2 for _ in range(len(spilt_data_frame_group))]
-    the_n_list = [i for i in range(len(spilt_data_frame_group))]
-    root_list = [root for _ in range(len(spilt_data_frame_group))]
+    tasks = []
+    for task in range(len(spilt_data_frame_group)):
+        tasks.append(
+            data_frame_to_word(
+                spilt_data_frame_group[task],
+                the_people_type,
+                the_date1,
+                the_thing,
+                the_date2,
+                task,
+            )
+        )
 
-    # 加入进程池（不可以有print输出）
-    p.amap(
-        data_frame_to_word,
-        spilt_data_frame_group,
-        the_people_type_list,
-        the_date1_list,
-        the_thing_list,
-        the_date2_list,
-        the_n_list,
-        root_list,
-    )
-
-    p.close()
-    p.join()
-    p.clear()
+    await asyncio.gather(*tasks)
