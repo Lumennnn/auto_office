@@ -1,7 +1,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2022-03-12 13:41:19
+LastEditTime: 2022-03-12 15:00:13
 LastEditors: Lumen
 Description:
 👻👻👻👻👻👻👻👻👻👻👻👻👻
@@ -9,6 +9,7 @@ Description:
 import sys
 
 import pandas as pd
+import asyncio
 from pywebio.input import *
 from pywebio.output import *
 
@@ -39,8 +40,6 @@ def check_none(the: str) -> str:
     """
     if the is None or "":
         return "值不能为空"
-    else:
-        return ""
 
 
 if __name__ == "__main__":
@@ -109,12 +108,14 @@ if __name__ == "__main__":
 
     with put_loading(shape="grow", color="primary"):
         try:
-            al.data_frame_to_final_word(
-                data_frame=frame,
-                the_people_type=get_input["people_name"],
-                the_date1=get_input["date1"],
-                the_thing=get_input["thing"],
-                the_date2=get_input["date2"],
+            asyncio.run(
+                al.data_frame_to_final_word(
+                    data_frame=frame,
+                    the_people_type=get_input["people_name"],
+                    the_date1=get_input["date1"],
+                    the_thing=get_input["thing"],
+                    the_date2=get_input["date2"],
+                )
             )
         except Exception as e:
             print(e)
