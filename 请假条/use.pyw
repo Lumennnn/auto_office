@@ -1,7 +1,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2021-11-29 12:14:53
+LastEditTime: 2022-03-12 13:41:19
 LastEditors: Lumen
 Description:
 👻👻👻👻👻👻👻👻👻👻👻👻👻
@@ -39,6 +39,8 @@ def check_none(the: str) -> str:
     """
     if the is None or "":
         return "值不能为空"
+    else:
+        return ""
 
 
 if __name__ == "__main__":
@@ -54,7 +56,7 @@ if __name__ == "__main__":
         ]
     )
 
-    put_text("2.确保输入的时间段为以下格式")
+    put_text("2.确保输入的时间段为以下格式🔽")
     put_table(
         [
             ["序号", "时间段"],

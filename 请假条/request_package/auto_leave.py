@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2021-11-29 12:15:05
+LastEditTime: 2022-03-12 12:25:48
 LastEditors: Lumen
 Description: 活动请假条制作小程序
 
@@ -180,10 +180,9 @@ def split_data_frame(frame: DataFrame) -> List[DataFrame]:
         for x in range(block):
             if x == block - 1:
                 new_df: DataFrame = df[x * 18 : max_raw]
-                spilt_data_frame_group.append(new_df)
             else:
                 new_df: DataFrame = df[x * 18 : (x + 1) * 18]
-                spilt_data_frame_group.append(new_df)
+            spilt_data_frame_group.append(new_df)
 
     return spilt_data_frame_group
 
@@ -196,7 +195,7 @@ def data_frame_to_word(
     the_date2: str,
     the_n: int,
     root: str = "",
-) -> NoReturn:
+) -> None:
     """将DataFrame填充进Word模板中
 
     Args:
