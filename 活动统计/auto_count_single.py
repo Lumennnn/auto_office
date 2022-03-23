@@ -17,7 +17,7 @@ from docxtpl import DocxTemplate
 from pandas.core.frame import DataFrame
 
 
-def excel_to_excel(old_excel: str, temp_path: str = "./模板/temp") -> List[str]:
+def excel_to_excel(old_excel: str, temp_path: str = "./source/temp") -> List[str]:
     """将excel表格转换成适合使用的新excel表格
 
     Args:
@@ -162,4 +162,3 @@ def get_excel_list(path: str) -> List[str]:
             excel_lists.append(i)
 
     return excel_lists
-

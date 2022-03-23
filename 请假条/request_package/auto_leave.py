@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2022-03-23 15:21:21
+LastEditTime: 2022-03-23 15:32:08
 LastEditors: Lumen
 Description: 活动请假条制作小程序
 
@@ -12,15 +12,14 @@ import os
 from collections import Counter
 from math import ceil  # 向上取整
 from typing import Dict, List
-from functools import partial
+from multiprocessing import Pool
+import asyncio
 
 import pandas as pd
 from docxtpl import DocxTemplate
 from loguru import logger
 from pandas.core.frame import DataFrame
 
-from multiprocessing import Pool
-import asyncio
 
 logger.add("runing.log", retention="30 days", enqueue=True)
 
@@ -239,7 +238,7 @@ async def data_frame_to_word(
     time: str = list(data_frame["时间"])[0]
     time_quantum: str = list(data_frame["时间段"])[0]
 
-    tpl = DocxTemplate("./模板/请假条程序模板.docx")
+    tpl = DocxTemplate("./source/请假条程序模板.docx")
     name_list: List[str] = list(data_frame["姓名"])
     class_list: List[str] = list(data_frame["专业班级"])
 

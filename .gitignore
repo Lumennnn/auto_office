@@ -3,9 +3,9 @@
 __pycache__/
 
 /活动统计/*.xlsx
-/活动统计/模板/temp/*.xlsx
+/活动统计/source/temp/*.xlsx
 /请假条/*.xlsx
-/请假条/模板/temp/*.xlsx
+/请假条/source/temp/*.xlsx
 
 *.ini
 /icons8_office_365.ico

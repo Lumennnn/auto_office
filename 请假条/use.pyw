@@ -1,7 +1,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2022-03-22 21:49:16
+LastEditTime: 2022-03-23 15:32:27
 LastEditors: Lumen
 Description:
 👻👻👻👻👻👻👻👻👻👻👻👻👻
@@ -43,8 +43,8 @@ def check_none(the: str) -> str:
 
 
 if __name__ == "__main__":
-    img1 = open(".\\模板\\bangonshi.jpg", "rb").read()
-    img2 = open(".\\模板\\school.png", "rb").read()
+    img1 = open(".\\source\\bangonshi.png", "rb").read()
+    img2 = open(".\\source\\school.png", "rb").read()
     put_image(src=img1, width="770px", height="720px")
     put_markdown("### 使用时注意事项：")
     put_text("1.确保选择的excel文件内容为以下格式")

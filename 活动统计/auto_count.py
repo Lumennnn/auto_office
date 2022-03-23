@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2021-09-18 19:50:15
-LastEditTime: 2021-10-08 16:45:41
+LastEditTime: 2022-03-23 15:40:02
 LastEditors: Lumen
 Description:
 🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍🐱‍🏍
@@ -44,7 +44,7 @@ def activity_score(
             os.makedirs(root + ".\\" + the_name + ".\\" + sheet_name)
 
         for x in range(data.shape[0]):
-            tpl = DocxTemplate(".\\模板\\奖学金活动证明模板.docx")
+            tpl = DocxTemplate(".\\source\\奖学金活动证明模板.docx")
             person: List[str] = []  # 个人信息
             things: List[List[str, int]] = []  # 个人活动事项
 
@@ -135,7 +135,7 @@ def second_class_score(
             os.makedirs(root + ".\\" + the_name + ".\\" + sheet_name)
 
         for x in range(data.shape[0]):
-            tpl: DocxTemplate = DocxTemplate(".\\模板\\第二课堂活动证明模板.docx")
+            tpl: DocxTemplate = DocxTemplate(".\\source\\第二课堂活动证明模板.docx")
             person = []  # 个人信息
             things = []  # 个人活动事项
 

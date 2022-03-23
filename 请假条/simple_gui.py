@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2022-03-22 15:45:44
-LastEditTime: 2022-03-23 15:25:04
+LastEditTime: 2022-03-23 15:36:48
 LastEditors: Lumen
 Description:
 👻👻👻👻👻👻👻👻
@@ -40,7 +40,7 @@ layout2 = [
     ],
     [
         sg.Image(
-            "模板/赞.png",
+            "./source/赞.png",
             size=(500, 500),
             subsample=5,
             enable_events=True,
@@ -54,7 +54,7 @@ layout2 = [
 layout = [
     [
         sg.Image(
-            "模板/bangonshi.png",
+            "./source/bangonshi.png",
             size=(640, 601),
             subsample=2,
             enable_events=True,
@@ -67,7 +67,7 @@ layout = [
 ]
 
 
-window = sg.Window("青年志愿者联合会", layout, icon="模板/会徽.ico", size=(350, 350))
+window = sg.Window("青年志愿者联合会", layout, icon="./source/会徽.ico", size=(350, 350))
 
 while True:
     event, values = window.read()
@@ -102,7 +102,6 @@ while True:
         window["-Windows2-"].update(visible=True)
 
     if values["-Date1-"] and values["-Date2-"] and values["-Thing-"]:
-        print(values)
         if event == "-确认-":
             asyncio.run(
                 al.data_frame_to_final_word(
