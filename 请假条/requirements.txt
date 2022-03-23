@@ -2,4 +2,3 @@ pandas
 docxtpl
 loguru
 pywebio
-pathos

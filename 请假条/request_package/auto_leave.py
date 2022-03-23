@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2022-03-12 15:37:18
+LastEditTime: 2022-03-23 15:21:21
 LastEditors: Lumen
 Description: 活动请假条制作小程序
 
@@ -11,16 +11,36 @@ Description: 活动请假条制作小程序
 import os
 from collections import Counter
 from math import ceil  # 向上取整
-from typing import Dict, List, NoReturn
+from typing import Dict, List
+from functools import partial
 
 import pandas as pd
 from docxtpl import DocxTemplate
 from loguru import logger
 from pandas.core.frame import DataFrame
-from pathos.pools import ProcessPool as Pool
+
+from multiprocessing import Pool
 import asyncio
 
 logger.add("runing.log", retention="30 days", enqueue=True)
+
+
+def preprocess_excel(excel_path: str) -> DataFrame:
+    """对excel文件进行预处理
+
+    Args:
+        excel_path (str): 文件路径
+
+    Returns:
+        DataFrame: _description_
+    """
+    frame = pd.read_excel(excel_path)
+    # 去除空行
+    frame.dropna(how="all", inplace=True)
+    # 填充空值
+    frame.fillna(value="空", inplace=True)
+
+    return frame
 
 
 def get_time_quantum(frame: DataFrame) -> str:
@@ -64,19 +84,19 @@ def get_excel_list(path: str) -> List[str]:
     return excel_lists
 
 
-def check_data_frame_by_column(frame: DataFrame, type: str) -> bool:
+def check_data_frame_by_column(frame: DataFrame, col_type: str) -> bool:
     """检查DataFrame的指定列是否符合规范
 
     Args:
         frame (DataFrame): 传入的DataFrame表格
-        type (str): 检查类型
+        col_type (str): 检查类型
 
     Returns:
         bool: 此类型是否正确
     """
     is_right: bool = True
 
-    if type == "times":
+    if col_type == "times":
         right_time: set = set(["（", "）"])
         time_list: List[str] = list(frame["时间"])
         for index, time in enumerate(time_list):
@@ -87,13 +107,13 @@ def check_data_frame_by_column(frame: DataFrame, type: str) -> bool:
         if len(time_types) > (0.5 * len(time_list)):
             logger.error(f"检查时间格式是否符合规范(时间段范围数量出错)")
             is_right = False
-    elif type == "class_name":
+    elif col_type == "class_name":
         class_names: List[str] = list(frame["专业班级"])
         for index, name in enumerate(class_names):
             if len(name) != 6:
                 logger.error(f"检查专业班级是否符合规范(不符合长度限制)->行号:{index + 2}")
                 is_right = False
-    elif type == "names":
+    elif col_type == "names":
         names: List[str] = list(frame["姓名"])
         for index, name in enumerate(names):
             if len(name) > 5 or len(name) < 2:
@@ -103,11 +123,12 @@ def check_data_frame_by_column(frame: DataFrame, type: str) -> bool:
     return is_right
 
 
-def check_data_frame(data_frame: DataFrame):
+def check_data_frame(data_frame: DataFrame, is_multiprocess: bool = True):
     """检查传入的DataFrame是否符合规范
 
     Args:
         data_frame (DataFrame): 传入的DataFrame
+        is_multiprocess (bool)=True: 是否启动多进程
 
     Returns:
         [type]: 表格是否符合规范
@@ -120,15 +141,24 @@ def check_data_frame(data_frame: DataFrame):
         logger.error("检查列名是否符合规范")
         return False
 
-    p = Pool()
     type_list = ["times", "class_name", "names"]
-    data_list = [data_frame for _ in range(len(type_list))]
+    is_right_list: list[bool] = []
 
-    is_right_list = p.amap(check_data_frame_by_column, data_list, type_list).get()
+    if is_multiprocess:
+        p = Pool()
+        data_list = [data_frame for _ in range(len(type_list))]
+        zip_args = list(zip(data_list, type_list))
+        # is_right_list = p.amap(check_data_frame_by_column, data_list, type_list).get()
 
-    # 执行完close后不会有新的进程加入到pool,join函数等待所有子进程结束
-    p.close()
-    p.join()
+        is_right_list = p.starmap(check_data_frame_by_column, zip_args)
+
+        # # 执行完close后不会有新的进程加入到pool,join函数等待所有子进程结束
+        p.close()
+        p.join()
+        print(is_right_list, type(is_right_list))
+    else:
+        for _type in type_list:
+            is_right_list.append(check_data_frame_by_column(data_frame, _type))
 
     return all(is_right_list)
 

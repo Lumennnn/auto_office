@@ -1,7 +1,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2022-03-12 15:00:13
+LastEditTime: 2022-03-22 21:49:16
 LastEditors: Lumen
 Description:
 👻👻👻👻👻👻👻👻👻👻👻👻👻
@@ -73,14 +73,10 @@ if __name__ == "__main__":
 
     excel_list = al.get_excel_list(".")
 
-    excel = radio("选择当前目录下要转换的文件（仅限后缀名为.xlsx的文件）", excel_list)
-    excel: str = str(excel)
-    print("选择的Excel文件：", excel)
-    frame = pd.read_excel(excel)
-    # 去除空行
-    frame.dropna(how="all", inplace=True)
-    # 填充空值
-    frame.fillna(value="空", inplace=True)
+    excel_path = radio("选择当前目录下要转换的文件（仅限后缀名为.xlsx的文件）", excel_list)
+    excel_path: str = str(excel_path)
+    print("选择的Excel文件：", excel_path)
+    frame = al.preprocess_excel(excel_path)
 
     with put_loading(shape="border", color="primary"):
         if not al.check_data_frame(frame):  # 检查表格是否合适
