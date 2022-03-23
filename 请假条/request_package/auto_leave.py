@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2022-03-12 15:12:27
+LastEditTime: 2022-03-12 15:37:18
 LastEditors: Lumen
 Description: 活动请假条制作小程序
 
@@ -112,7 +112,6 @@ def check_data_frame(data_frame: DataFrame):
     Returns:
         [type]: 表格是否符合规范
     """
-    is_all_right = True
 
     # 检查列名称
     df_columns: set = set(data_frame)
@@ -307,6 +306,7 @@ async def data_frame_to_final_word(
                 the_thing,
                 the_date2,
                 task,
+                root,
             )
         )
 
