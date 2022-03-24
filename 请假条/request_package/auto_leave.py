@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2022-03-23 15:32:08
+LastEditTime: 2022-03-24 16:54:59
 LastEditors: Lumen
 Description: 活动请假条制作小程序
 
@@ -274,7 +274,7 @@ async def data_frame_to_word(
     tpl.render(context=context)
 
     if time_quantum == "未知":
-        tpl.save(
+        await tpl.save(
             root
             + the_thing
             + "请假条"
@@ -287,7 +287,7 @@ async def data_frame_to_word(
             + ".docx"
         )
     else:
-        tpl.save(
+        await tpl.save(
             root
             + the_thing
             + "请假条"
