@@ -8,7 +8,6 @@ Description:
 """
 import sys
 
-import pandas as pd
 from pywebio.input import *
 from pywebio.output import *
 
