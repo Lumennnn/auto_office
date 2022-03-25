@@ -2,13 +2,11 @@
 """
 Author: Lumen
 Date: 2022-03-22 15:45:44
-LastEditTime: 2022-03-23 15:36:48
+LastEditTime: 2022-03-25 17:23:19
 LastEditors: Lumen
 Description:
 👻👻👻👻👻👻👻👻
 """
-import asyncio
-
 import PySimpleGUI as sg
 
 import request_package.auto_leave as al
@@ -25,7 +23,7 @@ layout2 = [
             default_value="志愿者",
             readonly=True,
             size=(6, 1),
-            key="-People_name-",
+            key="-PeopleName-",
             font="雅黑",
         ),
     ],
@@ -103,14 +101,12 @@ while True:
 
     if values["-Date1-"] and values["-Date2-"] and values["-Thing-"]:
         if event == "-确认-":
-            asyncio.run(
-                al.data_frame_to_final_word(
-                    data_frame=frame,
-                    the_people_type=values["-People_name-"],
-                    the_date1=values["-Date1-"],
-                    the_thing=values["-Thing-"],
-                    the_date2=values["-Date2-"],
-                )
+            al.data_frame_to_words(
+                data_frame=frame,
+                the_people_type=values["-PeopleName-"],
+                the_date1=values["-Date1-"],
+                the_thing=values["-Thing-"],
+                the_date2=values["-Date2-"],
             )
         break
 

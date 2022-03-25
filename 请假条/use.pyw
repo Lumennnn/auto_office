@@ -1,7 +1,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2022-03-23 15:32:27
+LastEditTime: 2022-03-25 17:15:55
 LastEditors: Lumen
 Description:
 👻👻👻👻👻👻👻👻👻👻👻👻👻
@@ -9,7 +9,6 @@ Description:
 import sys
 
 import pandas as pd
-import asyncio
 from pywebio.input import *
 from pywebio.output import *
 
@@ -104,14 +103,12 @@ if __name__ == "__main__":
 
     with put_loading(shape="grow", color="primary"):
         try:
-            asyncio.run(
-                al.data_frame_to_final_word(
-                    data_frame=frame,
-                    the_people_type=get_input["people_name"],
-                    the_date1=get_input["date1"],
-                    the_thing=get_input["thing"],
-                    the_date2=get_input["date2"],
-                )
+            al.data_frame_to_words(
+                data_frame=frame,
+                the_people_type=get_input["people_name"],
+                the_date1=get_input["date1"],
+                the_thing=get_input["thing"],
+                the_date2=get_input["date2"],
             )
         except Exception as e:
             print(e)

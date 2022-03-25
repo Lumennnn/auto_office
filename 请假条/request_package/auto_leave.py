@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2021-09-19 12:18:45
-LastEditTime: 2022-03-24 16:54:59
+LastEditTime: 2022-03-25 17:18:42
 LastEditors: Lumen
 Description: 活动请假条制作小程序
 
@@ -13,7 +13,6 @@ from collections import Counter
 from math import ceil  # 向上取整
 from typing import Dict, List
 from multiprocessing import Pool
-import asyncio
 
 import pandas as pd
 from docxtpl import DocxTemplate
@@ -147,14 +146,12 @@ def check_data_frame(data_frame: DataFrame, is_multiprocess: bool = True):
         p = Pool()
         data_list = [data_frame for _ in range(len(type_list))]
         zip_args = list(zip(data_list, type_list))
-        # is_right_list = p.amap(check_data_frame_by_column, data_list, type_list).get()
 
         is_right_list = p.starmap(check_data_frame_by_column, zip_args)
 
         # # 执行完close后不会有新的进程加入到pool,join函数等待所有子进程结束
         p.close()
         p.join()
-        print(is_right_list, type(is_right_list))
     else:
         for _type in type_list:
             is_right_list.append(check_data_frame_by_column(data_frame, _type))
@@ -208,7 +205,7 @@ def split_data_frame(frame: DataFrame) -> List[DataFrame]:
     return spilt_data_frame_group
 
 
-async def data_frame_to_word(
+def data_frame_to_word(
     data_frame: DataFrame,
     the_people_type: str,
     the_date1: str,
@@ -217,7 +214,7 @@ async def data_frame_to_word(
     the_n: int,
     root: str = "",
 ) -> None:
-    """将DataFrame填充进Word模板中
+    """将DataFrame填充进Word模板并保存Word文件
 
     Args:
         data_frame (DataFrame): 传入DataFrame
@@ -274,7 +271,7 @@ async def data_frame_to_word(
     tpl.render(context=context)
 
     if time_quantum == "未知":
-        await tpl.save(
+        tpl.save(
             root
             + the_thing
             + "请假条"
@@ -287,7 +284,7 @@ async def data_frame_to_word(
             + ".docx"
         )
     else:
-        await tpl.save(
+        tpl.save(
             root
             + the_thing
             + "请假条"
@@ -302,7 +299,7 @@ async def data_frame_to_word(
         )
 
 
-async def data_frame_to_final_word(
+def data_frame_to_words(
     data_frame: DataFrame,
     the_people_type: str,
     the_date1: str,
@@ -310,7 +307,7 @@ async def data_frame_to_final_word(
     the_date2: str,
     root: str = "",
 ) -> None:
-    """将DataFrame转化为Word文件
+    """批量将DataFrame转化为Word文件
 
     Args:
         data_frame (DataFrame): 传入DataFrame
@@ -325,18 +322,14 @@ async def data_frame_to_final_word(
     """
 
     spilt_data_frame_group = split_data_frame(data_frame)
-    tasks = []
-    for task in range(len(spilt_data_frame_group)):
-        tasks.append(
-            data_frame_to_word(
-                spilt_data_frame_group[task],
-                the_people_type,
-                the_date1,
-                the_thing,
-                the_date2,
-                task,
-                root,
-            )
-        )
 
-    await asyncio.gather(*tasks)
+    for i in range(len(spilt_data_frame_group)):
+        data_frame_to_word(
+            spilt_data_frame_group[i],
+            the_people_type,
+            the_date1,
+            the_thing,
+            the_date2,
+            i,
+            root,
+        )
