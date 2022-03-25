@@ -9,7 +9,7 @@ Description:
 """
 import PySimpleGUI as sg
 
-import request_package.auto_leave as al
+import source.auto_leave as al
 
 
 sg.theme("DefaultNoMoreNagging")
