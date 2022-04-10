@@ -2,7 +2,7 @@
 """
 Author: Lumen
 Date: 2022-03-22 15:45:44
-LastEditTime: 2022-03-25 17:23:19
+LastEditTime: 2022-04-10 17:59:52
 LastEditors: Lumen
 Description:
 👻👻👻👻👻👻👻👻
@@ -38,7 +38,7 @@ layout2 = [
     ],
     [
         sg.Image(
-            "./source/赞.png",
+            filename="./source/赞.png",
             size=(500, 500),
             subsample=5,
             enable_events=True,
@@ -52,7 +52,7 @@ layout2 = [
 layout = [
     [
         sg.Image(
-            "./source/bangonshi.png",
+            filename="./source/bangonshi.png",
             size=(640, 601),
             subsample=2,
             enable_events=True,
