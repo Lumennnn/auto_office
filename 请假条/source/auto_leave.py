@@ -10,7 +10,7 @@ Description: 活动请假条制作小程序
 """
 import os
 from collections import Counter
-from math import ceil  # 向上取整
+from math import ceil
 from typing import Dict, List
 from multiprocessing import Pool
 
@@ -21,6 +21,23 @@ from pandas.core.frame import DataFrame
 
 
 logger.add("runing.log", retention="30 days", enqueue=True)
+
+
+def rm_all_space_and_special_character(sth: str) -> str:
+    """去除多余空格和特殊字符,只保留中文字符
+
+    Args:
+        sth (str): 传入的字符串
+
+    Returns:
+        str: 去除后的字符串
+    """
+    new_str = ""
+    for s in sth:
+        if "\u4e00" <= s <= "\u9fa5":
+            new_str += s
+
+    return new_str
 
 
 def preprocess_excel(excel_path: str) -> DataFrame:
@@ -37,6 +54,14 @@ def preprocess_excel(excel_path: str) -> DataFrame:
     frame.dropna(how="all", inplace=True)
     # 填充空值
     frame.fillna(value="空", inplace=True)
+    # 去除列名中的多余空格和非中文字符
+    old_columns = frame.columns
+    new_columns = []
+    for col in old_columns:
+        new_columns.append(rm_all_space_and_special_character(col))
+    frame.columns = new_columns
+    # 去除姓名列的多余空格和非中文字符
+    frame["姓名"] = frame["姓名"].transform(rm_all_space_and_special_character)
 
     return frame
 
@@ -235,7 +260,7 @@ def data_frame_to_word(
     time: str = list(data_frame["时间"])[0]
     time_quantum: str = list(data_frame["时间段"])[0]
 
-    tpl = DocxTemplate("./source/请假条程序模板.docx")
+    tpl = DocxTemplate("./source/请假条程序模板-2.docx")
     name_list: List[str] = list(data_frame["姓名"])
     class_list: List[str] = list(data_frame["专业班级"])
 
